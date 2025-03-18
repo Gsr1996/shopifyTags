@@ -1,0 +1,394 @@
+seo.hidden
+
+(https://www.zevi.ai/blogs/how-to-hide-products-from-shopify-search-a-step-by-step-guide-with-images)
+
+{
+ "type":"header",
+       "content": "🚚 Free Shipping & a Free Gift"
+     },
+     {
+       "type":"checkbox",
+       "label": "🚀 Enable to Access Block",
+       "id": "show_free_process_bar",
+       "default":true
+     },
+      {
+       "type": "color",
+       "id":"limit_color",
+       "label":"Highlight Price"
+     },
+      {
+       "type":"color",
+       "id": "progress_bar_color",
+       "label":"Progress Bar Color",
+       "default":"#a06a3b"
+     },
+    {
+      "type":"checkbox",
+      "id":"show_free_shipping",
+      "label":"Show Free Shipping",
+      "default":true
+    }, 
+     {
+       "type": "text",
+       "label": "🚛 Unlock Free Shipping at $XX!",
+       "id":"free_shipping_limit",
+       "default":"50"
+     },
+      {
+       "type": "textarea",
+       "id": "show_shipping_message",
+       "label": "Message Before Free Shipping",
+       "default":"Your are ||amount||  away from free shipping",
+       "info": "Use ||amount|| to display progress towards free shipping."
+     },
+      {
+       "type":"checkbox",
+       "label":"🎁 Enable to Unlock Your Free Gift!" ,
+       "id":"show_free_product_bar",
+       "default":true
+     },
+      {
+        "type":"product",
+        "id": "free_product",
+        "label":"Select Free Product"
+      },
+      {
+       "type": "text",
+       "label": "🚛 Unlock Free Product at $XX!",
+       "id":"free_product_limit",
+       "default":"80"
+     },
+      {
+       "type": "textarea",
+       "id": "show_free_product",
+       "label": "🎉 Congrats! You've Unlocked Free Shipping! 🚚",
+       "default":"Now you have Free Shipping & you are ||amount|| away to get a Free Gift",
+       "info": "Use ||amount|| to display progress towards free product."
+     },
+     {
+       "type": "textarea",
+       "id":"show_message_after",
+       "label":" 🎉 Free Shipping & Free Gift Unlocked!.",
+       "default":"You will have Free Shipping & 1 Free Gift  "
+     }
+
+{% style %}
+  .drawer {
+    visibility: hidden;
+  }
+  .progress {
+    background-color:{{settings.progress_bar_color}};
+    box-shadow: 0 5px 5px -6px {{settings.progress_bar_color}};
+  }
+    [line-key="{{ settings.free_product.first_available_variant.id }}"] quantity-popover {
+    pointer-events: none;
+    visibility: hidden;
+}
+{% endstyle %}
+
+seo.
+  <script src="{{ 'shipping-bar.js' | asset_url }}" defer="defer"></script>
+
+{% assign free_product_text = settings.show_free_product %}
+{% assign free_shipping_text = settings.show_shipping_message %}
+
+{% assign show_shipping = settings.show_free_shipping %}
+{% assign show_product = settings.show_free_product_bar %}
+{% assign subtotal_without_currency = cart.total_price | plus: 0 | divided_by: 100.0 %}
+ {% if show_shipping and  show_product  %}
+<cart-shipping-message
+data-free-show = "{% if settings.show_free_product_bar and settings.show_free_process_bar %}true{% else %}false{% endif %}"
+      data-free-product-id="{{ settings.free_product.selected_or_first_available_variant.id }}"
+      data-free-limit = "{{ settings.free_product_limit | plus: 0 }}"
+      data-cart-total = "{{ subtotal_without_currency}}"
+  >
+  {% if settings.free_product_limit != blank and show_product %}
+    {% assign limit = settings.free_product_limit | plus: 0 %}
+    {% assign shipping_limit = settings.free_shipping_limit | plus: 0 %}
+  {% else %}
+    {% assign limit = settings.free_shipping_limit | plus: 0 %}
+  {% endif %}
+
+  {% assign limit_currency = limit | times: 100 %}
+  {% assign limit_shipping_currency = shipping_limit | times: 100 %}
+  
+  {% assign class_message = '' %}
+  {% capture left_to_spend %}
+                <span data-left-to-spend {{ limit_currency }} style="color:{{ settings.limit_color }}">{{ limit_currency | minus: cart.total_price | money_without_trailing_zeros }}</span>
+              {% endcapture %}
+
+  {% capture left_to_spend_amout %}
+          <span data-left-to-spend-shipping {{ limit_shipping_currency }} style="color:{{ settings.limit_color }}" >{{ limit_shipping_currency | minus: cart.total_price | money_without_trailing_zeros }}</span>
+        {% endcapture %}
+
+  {% assign free_message = free_product_text | replace: '||amount||', left_to_spend %}
+  
+  {% assign free_shipping_message = free_shipping_text | replace: '||amount||', left_to_spend_amout %}
+  
+  {% assign qualified_shipping_message = settings.show_message_after %}
+  {% if subtotal_without_currency >= limit %}
+    {% if qualified_shipping_message != blank %}
+      {% assign class_message = 'is-success' %}
+    {% else %}
+      {% assign class_message = 'is-hidden' %}
+    {% endif %}
+  {% elsif subtotal_without_currency == 0 %}
+    {% comment %} {% assign class_message = 'is-hidden' %} {% endcomment %}
+  {% endif %}
+  
+
+  <p
+    class="cart__message {{ class_message }} {{ subtotal_without_currency }}"
+    data-cart-message="{% if qualified_shipping_message != blank %}true{% else %}false{% endif %}"
+    data-limit="{{ limit }}"
+  >
+    {% if show_wheel %}
+      {% assign percent = limit | minus: subtotal_without_currency | times: 100 | divided_by: limit %}
+      {% assign percent = 100 | minus: percent %}
+
+      {% if percent > 100 %}
+        {% assign percent = 100 %}
+      {% endif %}
+
+      <small class="cart__graph">
+        {% for i in (1..6) %}
+          <small class="cart__graph-dot cart__graph-dot--{{ i }}"></small>
+        {% endfor %}
+        {%- assign stroke_dashoffset = '87.96459430051421' -%}
+
+        {%- assign math_pi = 3.14159265359 -%}
+        {%- assign stroke_circumference = 28 | times: math_pi -%}
+        {%- assign stroke_calculate = percent | times: stroke_circumference -%}
+        {%- assign stroke_calculate = stroke_calculate | divided_by: 100 | divided_by: 2 -%}
+        {%- assign stroke_dashoffset = stroke_circumference | minus: stroke_calculate -%}
+
+        <svg height="18" width="18">
+          <circle r="7" cx="9" cy="9" />
+          <circle class="cart__graph-progress " stroke-dasharray="87.96459430051421 87.96459430051421" style="stroke-dashoffset: {{ stroke_dashoffset }}" data-cart-progress data-percent="{{ percent }}" r="7" cx="9" cy="9" />
+        </svg>
+      </small>
+    {% endif %}
+
+    {% if qualified_shipping_message != blank %}
+      <span class="cart__message-success">{{ qualified_shipping_message }}</span>
+    {% endif %}
+    {% assign percentProgress = limit | minus: subtotal_without_currency | times: 100 | divided_by: limit %}
+    {% assign percentShipping = shipping_limit
+      | minus: subtotal_without_currency
+      | times: 100
+      | divided_by: shipping_limit
+    %}
+    {% assign percentWidth = shipping_limit | times: 100 | divided_by: limit %}
+
+    <span class="cart__message-default" {{ percentShipping }}>
+      {% if percentShipping >= 0.5 and show_shipping %}
+        {{ free_shipping_message }}
+      {% else %}
+        {{ free_message }}
+      {% endif %}
+    </span>
+  </p>
+  <div class="progress-bar-container">
+    <div class="progress {{ class_message }}">
+      <div class="bar" data-percent {{ percentShipping }} style="width:{{ percentProgress | round }}%">
+
+        <div
+          class="wf-percent {% if class_message != 'is-success' %} process {% else %} is-sucess  {% endif %} {% if percentShipping >= 0 and show_shipping %} free-shipping-process {% else %}free-shipping-success {% endif %}"
+          style="right:{{ percentProgress | round | minus: 6 | at_least: 0 }}% "
+        >
+          {% render 'checkmark-icon' %}
+        </div>
+      </div>
+    </div>
+      <div class="wf-shipping-content" {% if show_product != false %}style="left:{{ percentWidth | round }}%" {% endif %}>
+      {% if show_shipping %}
+      <div class="wf-shipping-logo">
+        <h5>Free Shipping </h5>
+        {{ 'icon-truck.svg' | inline_asset_content }}
+      </div>
+      {% endif %}
+        <h5>Free Shipping </h5>
+        <div class="mobile-price-progressbar">{{  settings.free_shipping_limit | times:100 | money_with_currency  }}</div>
+      </div>
+      <div class="wf-shipping-product-content">
+      {% if show_product %}
+      {% assign product = settings.free_product %}
+      <div class="wf-shipping-product-img"
+        data-product-id="{{ product.selected_or_first_available_variant.id }}"
+        data-free-limit = "{{ settings.free_product_limit | plus: 0 }}"
+        >
+        <img
+          src="{{ product.featured_image | img_url: '121x' }}"
+          alt="{{ product.title }} - {{ product.selected_or_first_available_variant.title }}"
+          width="240"
+          height="{{ 240 | divided_by: product.featured_image.aspect_ratio | round }}"
+        >
+      </div>
+      {% endif %}
+       <h5>Free Product</h5>
+        <div class="mobile-price-progressbar">{{  settings.free_product_limit | times:100 | money_with_currency  }}</div>
+      </div>
+
+
+
+    
+  </div>
+ 
+</cart-shipping-message>
+{% endif %}
+<script>
+	class CartFreeProduct extends HTMLElement {
+  constructor() {
+    super();
+    this.variantId = Number(this.getAttribute("data-free-product-id"));
+    this.freePrice = Number(this.getAttribute("data-free-limit"));
+    this.showProduct = this.getAttribute("data-free-show") === "true";
+    this.handleCartUpdate = this.handleCartUpdate.bind(this);
+  }
+  connectedCallback() {
+    if (!this.showProduct) {
+      console.log("Free product condition not met.");
+      return;
+    }
+    document.addEventListener("DOMContentLoaded", this.handleCartUpdate);
+    this.handleCartUpdate(); // Initial check when component loads
+  }
+  disconnectedCallback() {
+    document.removeEventListener("DOMContentLoaded", this.handleCartUpdate);
+  }
+  async fetchCart() {
+    try {
+      const response = await fetch("/cart.js");
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+      return null;
+    }
+  }
+  async handleCartUpdate() {
+    const cart = await this.fetchCart();
+    if (!cart) return;
+    const cartTotal = cart.total_price / 100; // Convert cents to dollars
+    const hasFreeProduct = cart.items.some(
+      (item) => item.variant_id === this.variantId
+    );
+    console.log(this.freePrice, "this.freePrice");
+    if (cartTotal >= this.freePrice && !hasFreeProduct) {
+      await this.addFreeProduct();
+    } else if (cartTotal < this.freePrice && hasFreeProduct) {
+      const vart = document.querySelector(
+        `[line-key="${Number(this.variantId)}"]`
+      );
+      vart.querySelector(".loading__spinner").classList.remove("hidden");
+      if (vart) {
+        const spinner = vart.querySelector(".loading__spinner");
+        if (spinner) {
+          spinner.classList.remove("hidden");
+          console.log("Spinner is now visible.");
+        }
+      }
+      console.log(vart, "vart", `[line-key="${this.variantId}"]`);
+      await this.removeFreeProduct();
+    }
+  }
+  async addFreeProduct() {
+    try {
+      if (!this.variantId) throw new Error("Product ID is required");
+      const data = { items: [{ id: this.variantId, quantity: 1 }] };
+      const response = await fetch("/cart/add.js", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok)
+        throw new Error(`Failed to add product. Status: ${response.status}`);
+      const cart = await response.json();
+      document.dispatchEvent(new CustomEvent("cart:updated", { detail: cart }));
+      this.updateCartDrawer();
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+    }
+  }
+  async removeFreeProduct() {
+    try {
+      const cart = await this.fetchCart();
+      if (!cart) return;
+      const freeProduct = cart.items.find(
+        (item) => item.variant_id === this.variantId
+      );
+      if (!freeProduct) return;
+      const response = await fetch("/cart/change.js", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: freeProduct.key, quantity: 0 }),
+      });
+      if (!response.ok)
+        throw new Error(`Failed to remove product. Status: ${response.status}`);
+      const updatedCart = await response.json();
+      this.checkCart();
+      document.dispatchEvent(
+        new CustomEvent("cart:updated", { detail: updatedCart })
+      );
+
+      console.log("Free product removed from cart.");
+    } catch (error) {
+      console.error("Error removing product from cart:", error);
+    }
+  }
+  async checkCart() {
+    const cart = await this.fetchCart();
+    if (cart?.item_count === 0) this.emptyCart();
+    this.updateCartDrawer();
+  }
+  async updateCartDrawer() {
+    try {
+      const response = await fetch("/?section=cart-drawer");
+      const responseText = await response.text();
+      const html = new DOMParser().parseFromString(responseText, "text/html");
+      const cartDrawer = document.querySelector("#CartDrawer");
+      const countBubble = document.querySelector("#cart-icon-bubble");
+      const newCartDrawer = html.querySelector(".cart-drawer");
+      const newCountBubble = html.querySelector("#cart-icon-bubble");
+      if (cartDrawer && newCartDrawer)
+        cartDrawer.innerHTML = newCartDrawer.innerHTML;
+      if (countBubble && newCountBubble)
+        countBubble.innerHTML = newCountBubble.innerHTML;
+      console.log("Cart drawer updated.");
+    } catch (error) {
+      console.error("Error updating cart drawer:", error);
+    }
+  }
+  async emptyCart() {
+    const cartDrawer = document.querySelector("cart-drawer");
+    if (cartDrawer) cartDrawer.classList.add("is-empty");
+  }
+}
+
+// Register the custom element
+customElements.define("cart-shipping-message", CartFreeProduct);
+
+</script>
+
+
+
+  <script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function () {
+    function redirectToCorrectUrl() {
+        // Get the current page path
+        let currentPath = window.location.pathname; // Extracts only the path from the URL
+        // Define the correct path and redirection path
+        let targetPath = '{{settings.free_product.url}}'; // Relative path
+        let redirectionUrl = window.Shopify.routes.root + '404';
+        // Check if the current path matches the target and redirect if necessary
+        if (currentPath === targetPath) {
+            window.location.replace(redirectionUrl); // Redirect to the 404 page
+        }
+    }
+
+    // Call the function to check and redirect
+    redirectToCorrectUrl();
+});
+
+
+    </script>
