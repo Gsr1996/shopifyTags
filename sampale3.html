@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>3D Paddle Customizer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root {
+      --accent: #111;
+      --bg-panel: rgba(255, 255, 255, 0.7);
+      --radius: 14px;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto;
+      background: linear-gradient(145deg, #f4f4f4, #e6e9ef);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #ui {
+      width: 340px;
+      padding: 24px;
+      backdrop-filter: blur(14px);
+      background: var(--bg-panel);
+      border-right: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 4px 0 20px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    #previewWrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    h2 {
+      font-weight: 600;
+      margin-bottom: 18px;
+      font-size: 20px;
+    }
+
+    h3 {
+      margin: 10px 0 4px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .swatches {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0 14px;
+    }
+
+    .color-swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: inset 0 0 0 2px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .color-swatch:hover {
+      transform: scale(1.1);
+    }
+
+    .color-swatch.active {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+      transform: scale(1.12);
+    }
+
+    select, input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(0,0,0,0.15);
+      background: rgba(255,255,255,0.6);
+    }
+
+    button {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: #000;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    }
+
+    small {
+      display: block;
+      color: #555;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 800px) {
+      body { flex-direction: column; }
+      #ui { width: 100%; border-right: none; border-bottom: 1px solid rgba(0,0,0,0.1); }
+    }
+  </style>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "OrbitControls": "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js"
+    }
+  }
+  </script>
+</head>
+
+<body>
+  <div id="ui">
+    <div>
+      <h2>Pickleball Paddle Customizer 🏓</h2>
+
+      <h3>Paddle Face Color</h3>
+      <div id="paddleColors" class="swatches">
+        <div class="color-swatch active" data-color="#bcbcbc" style="background:#bcbcbc"></div>
+        <div class="color-swatch" data-color="#2b7a78" style="background:#2b7a78"></div>
+        <div class="color-swatch" data-color="#4a4a8a" style="background:#4a4a8a"></div>
+        <div class="color-swatch" data-color="#8b2f34" style="background:#8b2f34"></div>
+        <div class="color-swatch" data-color="#c76b49" style="background:#c76b49"></div>
+      </div>
+
+      <h3>Grip Color</h3>
+      <div id="gripColors" class="swatches">
+        <div class="color-swatch active" data-color="#c83b2b" style="background:#c83b2b"></div>
+        <div class="color-swatch" data-color="#222" style="background:#222"></div>
+        <div class="color-swatch" data-color="#0a6" style="background:#0a6"></div>
+        <div class="color-swatch" data-color="#b04a4a" style="background:#b04a4a"></div>
+      </div>
+
+      <label for="logoUpload">Upload Logo (PNG)</label>
+      <input id="logoUpload" type="file" accept="image/*">
+
+      <label for="paddleType">Paddle Type</label>
+      <select id="paddleType">
+        <option>GIO Air</option>
+        <option>PowerPlay</option>
+        <option>Standard</option>
+      </select>
+
+      <button id="addToCartBtn">Add to Cart</button>
+      <small>Preview will be attached as image data.</small>
+    </div>
+  </div>
+
+  <div id="previewWrap">
+    <canvas id="paddlePreview"></canvas>
+  </div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'OrbitControls';
+
+// ---------- Setup ----------
+const container = document.getElementById('paddlePreview');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf3f4f6);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.05, 100);
+camera.position.set(0, 1.05, 2.8);
+
+const renderer = new THREE.WebGLRenderer({ canvas: container, antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth - 340, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.outputEncoding = THREE.sRGBEncoding;
+
+// ---------- Controls ----------
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.enableZoom = false;
+
+// ---------- Lights ----------
+scene.add(new THREE.HemisphereLight(0xffffff, 0x999999, 1.05));
+const dir = new THREE.DirectionalLight(0xffffff, 1.0);
+dir.position.set(3, 4.5, 3);
+scene.add(dir);
+
+// ---------- Paddle Shape ----------
+function paddleOutline(w, h, neckW, neckH, cornerR, shoulderDepth) {
+  const s = new THREE.Shape();
+  const hw = w / 2;
+  const hh = h / 2;
+  const nw = neckW / 2;
+  const ny = -hh + neckH;
+
+  s.moveTo(-hw + cornerR, hh);
+  s.quadraticCurveTo(-hw, hh, -hw, hh - cornerR);
+  s.lineTo(-hw, ny + shoulderDepth);
+  s.bezierCurveTo(-hw * 0.98, ny + shoulderDepth * 0.6, -hw * 0.45, ny + shoulderDepth * 0.15, -nw, ny);
+  s.lineTo(nw, ny);
+  s.bezierCurveTo(hw * 0.45, ny + shoulderDepth * 0.15, hw * 0.98, ny + shoulderDepth * 0.6, hw, ny + shoulderDepth);
+  s.lineTo(hw, hh - cornerR);
+  s.quadraticCurveTo(hw, hh, hw - cornerR, hh);
+  s.lineTo(-hw + cornerR, hh);
+  s.closePath();
+  return s;
+}
+
+const SCALE = 0.5;
+const W = 1.56 * SCALE;
+const H = 2.96 * SCALE;
+const D = 0.02 * SCALE;
+const neckW = 0.2 * SCALE;
+const neckH = 0.44 * SCALE;
+const cornerR = 0.455 * SCALE;
+const shoulderDepth = 0.9 * SCALE;
+
+// ---------- Rim ----------
+const rimShape = paddleOutline(W, H, neckW, neckH, cornerR, shoulderDepth);
+const rimGeo = new THREE.ExtrudeGeometry(rimShape, {
+  depth: D + 0.04,
+  bevelEnabled: true,
+  bevelThickness: 0.0015,
+  bevelSize: 0.0015,
+  bevelSegments: 9,
+  curveSegments: 24
+});
+rimGeo.center();
+const rimMat = new THREE.MeshStandardMaterial({ color: 0x222, roughness: 0.45, metalness: 0.2 });
+const rim = new THREE.Mesh(rimGeo, rimMat);
+rim.castShadow = true;
+scene.add(rim);
+
+// ---------- Paddle Faces (Front + Back) ----------
+const faceShape = paddleOutline(W - 0.08, H - 0.08, neckW - 0.08, neckH, cornerR - 0.05, shoulderDepth - 0.05);
+const faceGeo = new THREE.ShapeGeometry(faceShape);
+faceGeo.center();
+
+// Shiny composite-style material
+const faceMat = new THREE.MeshPhysicalMaterial({
+  color: 0xbcbcbc,
+  roughness: 0.3,
+  metalness: 0.15,
+  clearcoat: 0.9,
+  clearcoatRoughness: 0.05,
+  reflectivity: 0.8
+});
+
+const frontFace = new THREE.Mesh(faceGeo, faceMat);
+frontFace.position.z = 0.045;
+
+const backFace = new THREE.Mesh(faceGeo, faceMat.clone());
+backFace.position.z = -0.045;
+backFace.rotation.y = Math.PI;
+
+scene.add(frontFace, backFace);
+
+// Keep reference for updates
+const faces = [frontFace, backFace];
+
+// ---------- Neck ----------
+const neckGeo = new THREE.CylinderGeometry(0.12, 0.13, 0.1, 36);
+const neckMat = new THREE.MeshStandardMaterial({ color: 0x222, roughness: 0.5 });
+const neck = new THREE.Mesh(neckGeo, neckMat);
+const neckPosY = -H / 2 + 0.16;
+neck.position.y = neckPosY;
+scene.add(neck);
+
+// ---------- Handle ----------
+const handleHeight = 0.5; // Increased handle length for better proportion
+const handleGeo = new THREE.CylinderGeometry(0.115, 0.115, handleHeight, 48);
+const handleMat = new THREE.MeshStandardMaterial({ color: 0xc83b2b, roughness: 0.6 });
+const handle = new THREE.Mesh(handleGeo, handleMat);
+handle.position.y = neckPosY - (0.1 / 2) - (handleHeight / 2) + 0.01;
+scene.add(handle);
+
+// ---------- Grip Bands ----------
+const gripMat = new THREE.MeshStandardMaterial({ color: handleMat.color, roughness: 0.4 });
+const numberOfBands = 16; // Increased number of bands for longer handle
+const bandSpacing = (handleHeight - 0.05) / numberOfBands; // Even spacing across handle length
+
+for (let i = 0; i < numberOfBands; i++) {
+  const torus = new THREE.TorusGeometry(0.118, 0.005, 8, 40);
+  const band = new THREE.Mesh(torus, gripMat);
+  band.rotation.x = Math.PI / 2;
+  // Position bands evenly along the handle, starting from near the top
+  band.position.y = handle.position.y + (handleHeight/2 - 0.04) - i * bandSpacing;
+  scene.add(band);
+}
+
+// ---------- Logo Upload ----------
+let logoMesh = null;
+document.getElementById('logoUpload').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const tex = new THREE.TextureLoader().load(reader.result);
+    tex.encoding = THREE.sRGBEncoding;
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    if (logoMesh) scene.remove(logoMesh);
+    const logo = new THREE.Mesh(
+      new THREE.PlaneGeometry(W * 0.6, H * 0.25),
+      new THREE.MeshBasicMaterial({ map: tex, transparent: true })
+    );
+    logo.position.set(0, -0.15 * SCALE, 0.05);
+    scene.add(logo);
+    logoMesh = logo;
+  };
+  reader.readAsDataURL(file);
+});
+
+// ---------- Color Pickers ----------
+function activateColorPickers() {
+  const paddleSwatches = document.querySelectorAll('#paddleColors .color-swatch');
+  const gripSwatches = document.querySelectorAll('#gripColors .color-swatch');
+
+  // Grip color updates
+  gripSwatches.forEach((s) =>
+    s.addEventListener('click', () => {
+      gripSwatches.forEach((el) => el.classList.remove('active'));
+      s.classList.add('active');
+      const selected = s.dataset.color;
+      handleMat.color.set(selected);
+      gripMat.color.set(selected);
+      handleMat.needsUpdate = gripMat.needsUpdate = true;
+    })
+  );
+
+  // Paddle face color updates (✅ affects both sides)
+  paddleSwatches.forEach((s) =>
+    s.addEventListener('click', () => {
+      paddleSwatches.forEach((el) => el.classList.remove('active'));
+      s.classList.add('active');
+      const selected = s.dataset.color;
+      faces.forEach(f => {
+        f.material.color.set(selected);
+        f.material.needsUpdate = true;
+      });
+    })
+  );
+}
+activateColorPickers();
+
+// ---------- Resize ----------
+function resize() {
+  const width = window.innerWidth > 800 ? window.innerWidth - 340 : window.innerWidth;
+  renderer.setSize(width, window.innerHeight);
+  camera.aspect = width / window.innerHeight;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ---------- Animation ----------
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+// ---------- Add to Cart ----------
+document.getElementById('addToCartBtn').addEventListener('click', async () => {
+  renderer.render(scene, camera);
+  const img = renderer.domElement.toDataURL('image/png');
+  const payload = {
+    id: 'REPLACE_WITH_PRODUCT_ID',
+    quantity: 1,
+    properties: {
+      'Paddle Type': document.getElementById('paddleType').value,
+      'Paddle Color': faces[0].material.color.getStyle(),
+      'Grip Color': handleMat.color.getStyle(),
+      Preview: img
+    }
+  };
+  await fetch('/cart/add.js', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  alert('✅ Added to cart!');
+});
+</script>
+
+
+
+
+</body>
+</html>
