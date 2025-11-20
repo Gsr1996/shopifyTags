@@ -7,45 +7,69 @@
   <style>
     :root {
       --accent: #111;
-      --bg-panel: rgba(255, 255, 255, 0.7);
-      --radius: 14px;
+      --bg-panel: rgba(255, 255, 255, 0.78);
+      --radius: 12px;
+      --active-outline: 2px;
     }
 
     body {
       margin: 0;
-      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
       background: linear-gradient(145deg, #f4f4f4, #e6e9ef);
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 30px;
-      gap: 24px;
+      padding: 22px;
+      gap: 18px;
       min-height: 100vh;
+      color: #111;
     }
+
+    .topbar {
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
     .container {
-    display: flex;
-}
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      width: calc(100% - 60px);
+      max-width: 1180px;
+    }
 
     #ui {
-     width: 20rem;
-    padding: 24px;
-    backdrop-filter: blur(14px);
-    background: var(--bg-panel);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-    border-radius: var(--radius);
+      width: 22.5rem;
+      padding: 18px;
+      backdrop-filter: blur(10px);
+      background: var(--bg-panel);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+      border-radius: var(--radius);
     }
 
     #previewWrap {
-          width: 60rem;
-    height: 47rem;
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    background: #f3f3f3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+      flex: 1;
+      min-width: 44rem;
+      height: 44rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 10px 36px rgba(0, 0, 0, 0.14);
+      background: #f3f3f3;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .canvasWrap {
+      flex: 1;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: linear-gradient(180deg,#f7f7f8,#eef1f6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
     canvas {
@@ -57,40 +81,40 @@
 
     h2 {
       font-weight: 600;
-      margin-bottom: 18px;
-      font-size: 20px;
+      margin-bottom: 12px;
+      font-size: 18px;
     }
 
     h3 {
-      margin: 10px 0 4px;
-      font-size: 14px;
-      font-weight: 500;
+      margin: 10px 0 6px;
+      font-size: 13px;
+      font-weight: 600;
     }
 
     .swatches {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-      margin: 8px 0 14px;
+      margin: 8px 0 12px;
     }
 
     .color-swatch {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius);
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.25s ease;
-      box-shadow: inset 0 0 0 2px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.05);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.05);
     }
 
     .color-swatch:hover {
-      transform: scale(1.1);
+      transform: scale(1.05);
     }
 
     .color-swatch.active {
-      outline: 3px solid var(--accent);
+      outline: var(--active-outline) solid var(--accent);
       outline-offset: 2px;
-      transform: scale(1.12);
+      transform: scale(1.06);
     }
 
     input[type="range"] {
@@ -98,33 +122,51 @@
       margin: 4px 0 12px;
     }
 
-    select, input[type="file"] {
+    select, input[type="file"], input[type="number"] {
       width: 100%;
       padding: 8px;
-      border-radius: var(--radius);
-      border: 1px solid rgba(0,0,0,0.15);
-      background: rgba(255,255,255,0.6);
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(255,255,255,0.85);
       margin-bottom: 10px;
+      box-sizing: border-box;
     }
 
     button {
-      margin-top: 10px;
-      padding: 12px 16px;
-      border-radius: var(--radius);
+      margin-top: 6px;
+      padding: 11px 14px;
+      border-radius: 10px;
       border: none;
       background: var(--accent);
       color: white;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-      transition: all 0.3s ease;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
       width: 100%;
     }
 
     button:hover {
-      background: #000;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+    }
+
+    .metaRow {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .metaCol {
+      flex: 1;
+    }
+
+    .priceBox {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.03);
+      font-weight: 600;
     }
 
     small {
@@ -133,6 +175,55 @@
       margin-top: 10px;
       font-size: 12px;
       text-align: center;
+    }
+
+    /* Testimonials */
+    .testimonials {
+      margin-top: 6px;
+      padding: 12px;
+      border-radius: 10px;
+      background: linear-gradient(180deg,#ffffff,#fbfbfd);
+      border: 1px solid rgba(0,0,0,0.04);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    }
+    .testimonialText {
+      font-size: 14px;
+      color: #222;
+      min-height: 48px;
+    }
+    .testimonialMeta {
+      margin-top: 8px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+    }
+    .testimonialControls button {
+      width: auto;
+      padding: 6px 10px;
+      font-size: 13px;
+      background: rgba(0,0,0,0.06);
+      color: #111;
+      box-shadow: none;
+    }
+
+    /* description */
+    .desc {
+      font-size: 13px;
+      color: #333;
+      line-height: 1.3;
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    /* small screens */
+    @media (max-width: 980px) {
+      .container { flex-direction: column; align-items: center; }
+      #ui { width: calc(100% - 40px); max-width: 680px; }
+      #previewWrap { min-width: unset; width: calc(100% - 40px); height: 480px; }
     }
   </style>
 
@@ -147,214 +238,442 @@
 </head>
 
 <body>
-  <div style="text-align:center; margin-bottom:20px;">
-    <h1>3D Pickleball Paddle Customizer</h1>
-    <p>Customize your paddle colors and logo in real-time!</p>
-    </div>
+  <div class="topbar">
+    <h1 style="margin:0 0 6px">3D Pickleball Paddle Customizer</h1>
+    <p style="margin:0; color:#444">Customize your paddle colors, logo, and details — preview updates in real time.</p>
+  </div>
+
   <div class="container">
-  <div id="ui">
-    <h2>Pickleball Paddle Customizer 🏓</h2>
+    <div id="ui">
+      <h2>Pickleball Paddle Customizer 🏓</h2>
 
-    <h3>Paddle Face Color</h3>
-    <div id="paddleColors" class="swatches">
-      <div class="color-swatch active" data-color="#bcbcbc" style="background:#bcbcbc"></div>
-      <div class="color-swatch" data-color="#2b7a78" style="background:#2b7a78"></div>
-      <div class="color-swatch" data-color="#4a4a8a" style="background:#4a4a8a"></div>
-      <div class="color-swatch" data-color="#8b2f34" style="background:#8b2f34"></div>
-      <div class="color-swatch" data-color="#c76b49" style="background:#c76b49"></div>
+      <h3>Paddle Face Color</h3>
+      <div id="paddleColors" class="swatches">
+        <div class="color-swatch active" data-color="#bcbcbc" style="background:#bcbcbc"></div>
+        <div class="color-swatch" data-color="#2b7a78" style="background:#2b7a78"></div>
+        <div class="color-swatch" data-color="#4a4a8a" style="background:#4a4a8a"></div>
+        <div class="color-swatch" data-color="#8b2f34" style="background:#8b2f34"></div>
+        <div class="color-swatch" data-color="#c76b49" style="background:#c76b49"></div>
+      </div>
+
+      <h3>Grip Color</h3>
+      <div id="gripColors" class="swatches">
+        <!-- Grip list provided -->
+        <div class="color-swatch" data-color="#000000" style="background:#000000"></div>
+        <div class="color-swatch" data-color="#FFFFFF" style="background:#FFFFFF; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08)"></div>
+        <div class="color-swatch" data-color="#605E5F" style="background:#605E5F"></div>
+        <div class="color-swatch" data-color="#0000FF" style="background:#0000FF"></div>
+        <div class="color-swatch active" data-color="#A7353C" style="background:#A7353C"></div>
+        <div class="color-swatch" data-color="#6CBB45" style="background:#6CBB45"></div>
+        <div class="color-swatch" data-color="#BBFB87" style="background:#BBFB87"></div>
+        <div class="color-swatch" data-color="#C77F61" style="background:#C77F61"></div>
+        <div class="color-swatch" data-color="#F2CD17" style="background:#F2CD17"></div>
+        <div class="color-swatch" data-color="#D3ABBD" style="background:#D3ABBD"></div>
+      </div>
+
+      <h3>Edgeguard (Border) Color</h3>
+      <div id="rimColors" class="swatches">
+        <!-- Edgeguard list provided -->
+        <div class="color-swatch active" data-color="#000000" style="background:#000000"></div>
+        <div class="color-swatch" data-color="#FFFFFF" style="background:#FFFFFF; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08)"></div>
+        <div class="color-swatch" data-color="#B0B2C0" style="background:#B0B2C0"></div>
+        <div class="color-swatch" data-color="#314FDD" style="background:#314FDD"></div>
+        <div class="color-swatch" data-color="#FF4450" style="background:#FF4450"></div>
+        <div class="color-swatch" data-color="#6CBB45" style="background:#6CBB45"></div>
+        <div class="color-swatch" data-color="#FF8C33" style="background:#FF8C33"></div>
+        <div class="color-swatch" data-color="#5496CB" style="background:#5496CB"></div>
+        <div class="color-swatch" data-color="#FFB28C" style="background:#FFB28C"></div>
+        <div class="color-swatch" data-color="#FFFF19" style="background:#FFFF19"></div>
+        <div class="color-swatch" data-color="#FF89F2" style="background:#FF89F2"></div>
+      </div>
+
+      <label for="logoUpload">Upload Logo (PNG recommended, transparent background)</label>
+      <input id="logoUpload" type="file" accept="image/*">
+
+      <h3>Logo Controls</h3>
+      <label>X Position</label>
+      <input type="range" id="logoX" min="-0.6" max="0.6" step="0.01" value="0">
+      <label>Y Position</label>
+      <input type="range" id="logoY" min="-0.6" max="0.6" step="0.01" value="0">
+      <label>Size</label>
+      <input type="range" id="logoScale" min="0.3" max="1.6" step="0.01" value="1.05">
+
+      <label for="paddleType">Paddle Type</label>
+      <select id="paddleType">
+        <option value="gio">GIO Air</option>
+        <option value="power">PowerPlay</option>
+        <option value="std">Standard</option>
+      </select>
+
+      <div class="desc" id="paddleDesc">
+        <strong>GIO Air</strong><br>
+        Lightweight frame prioritizing maneuverability and soft touch. Ideal for players who like speed and quick reactions.
+      </div>
+
+      <div style="margin-top:10px" class="metaRow">
+        <div class="metaCol">
+          <label for="price">Price (per paddle)</label>
+          <div class="priceBox" id="priceBox">₹ 4,499</div>
+        </div>
+        <div style="width:92px;">
+          <label for="qty">Quantity</label>
+          <input id="qty" type="number" min="1" value="1">
+        </div>
+      </div>
+
+      <div style="margin-top:10px" class="priceBox" id="totalBox">Total: ₹ 4,499</div>
+
+      <button id="addToCartBtn">Add to Cart</button>
+      <small>Preview image will be attached as image data in the cart object (for demo it logs to console).</small>
     </div>
 
-    <h3>Grip Color</h3>
-    <div id="gripColors" class="swatches">
-      <div class="color-swatch active" data-color="#c83b2b" style="background:#c83b2b"></div>
-      <div class="color-swatch" data-color="#222" style="background:#222"></div>
-      <div class="color-swatch" data-color="#0a6" style="background:#0a6"></div>
-      <div class="color-swatch" data-color="#b04a4a" style="background:#b04a4a"></div>
-    </div>
+    <div id="previewWrap">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-weight:700">Preview</div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <div style="font-size:13px; color:#555">View</div>
+          <div style="font-size:13px; color:#555"> • Rotate to inspect</div>
+        </div>
+      </div>
 
-    <h3>Rim Color</h3>
-    <div id="rimColors" class="swatches">
-      <div class="color-swatch active" data-color="#222" style="background:#222"></div>
-      <div class="color-swatch" data-color="#666" style="background:#666"></div>
-      <div class="color-swatch" data-color="#999" style="background:#999"></div>
-      <div class="color-swatch" data-color="#b04a4a" style="background:#b04a4a"></div>
-      <div class="color-swatch" data-color="#0a6" style="background:#0a6"></div>
-    </div>
+      <div class="canvasWrap">
+        <canvas id="paddlePreview"></canvas>
+      </div>
 
-    <label for="logoUpload">Upload Logo (PNG)</label>
-    <input id="logoUpload" type="file" accept="image/*">
+      <div style="display:flex; gap:12px; align-items:center;">
+        <div style="flex:1;">
+          <div style="font-size:13px; color:#444">Selected:</div>
+          <div style="font-weight:700; margin-top:2px" id="selectedMeta">GIO Air • Grip: #A7353C • Edgeguard: #000000</div>
+        </div>
+        <div style="width:240px;">
+          <!-- testimonials live inside preview area as a card -->
+          <div class="testimonials" id="testimonials">
+            <div class="testimonialText" id="testimonialText">“Love the balance — this paddle gave me better control during doubles.”</div>
+            <div class="testimonialMeta">
+              <div style="font-weight:600; font-size:13px;" id="testimonialAuthor">— Priya K.</div>
+              <div class="testimonialControls">
+                <button id="prevTest">Prev</button>
+                <button id="nextTest">Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <h3>Logo Controls</h3>
-    <label>X Position</label>
-    <input type="range" id="logoX" min="-0.5" max="0.5" step="0.01" value="0">
-    <label>Y Position</label>
-    <input type="range" id="logoY" min="-0.5" max="0.5" step="0.01" value="0">
-    <label>Size</label>
-    <input type="range" id="logoScale" min="0.1" max="1" step="0.01" value="0.6">
+    </div> <!-- previewWrap -->
+  </div> <!-- container -->
 
-    <label for="paddleType">Paddle Type</label>
-    <select id="paddleType">
-      <option>GIO Air</option>
-      <option>PowerPlay</option>
-      <option>Standard</option>
-    </select>
+  <script type="module">
+  import * as THREE from 'three';
+  import { OrbitControls } from 'OrbitControls';
 
-    <button id="addToCartBtn">Add to Cart</button>
-    <small>Preview will be attached as image data.</small>
-  </div>
-  <div id="previewWrap">
-    <canvas id="paddlePreview"></canvas>
-  </div>
-</div>
+  // ---------- Setup ----------
 
-  
+  const canvas = document.getElementById('paddlePreview');
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xf3f4f6);
 
-<script type="module">
-import * as THREE from 'three';
-import { OrbitControls } from 'OrbitControls';
+  const camera = new THREE.PerspectiveCamera(45, 600/500, 0.05, 100);
+  camera.position.set(0, 1.05, 2.8);
 
-// ---------- Setup ----------
-const canvas = document.getElementById('paddlePreview');
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xf3f4f6);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(window.devicePixelRatio || 1);
+  renderer.setSize(600, 500);
+  renderer.outputEncoding = THREE.sRGBEncoding;
 
-const camera = new THREE.PerspectiveCamera(45, 600/500, 0.05, 100);
-camera.position.set(0, 1.05, 2.8);
+  // ---------- Controls ----------
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.enableZoom = true;
+  controls.autoRotate = false;
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(600, 500);
-renderer.outputEncoding = THREE.sRGBEncoding;
+  // ---------- Lighting ----------
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x999999, 1.05));
+  const dir = new THREE.DirectionalLight(0xffffff, 1.0);
+  dir.position.set(3, 4.5, 3);
+  scene.add(dir);
 
-// ---------- Controls ----------
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.08;
-controls.enableZoom = false;
+  // ---------- Paddle Geometry Helpers ----------
+  function paddleOutline(w, h, neckW, neckH, cornerR, shoulderDepth) {
+    const s = new THREE.Shape();
+    const hw = w / 2, hh = h / 2, nw = neckW / 2, ny = -hh + neckH;
+    s.moveTo(-hw + cornerR, hh);
+    s.quadraticCurveTo(-hw, hh, -hw, hh - cornerR);
+    s.lineTo(-hw, ny + shoulderDepth);
+    s.bezierCurveTo(-hw * 0.98, ny + shoulderDepth * 0.6, -hw * 0.45, ny + shoulderDepth * 0.15, -nw, ny);
+    s.lineTo(nw, ny);
+    s.bezierCurveTo(hw * 0.45, ny + shoulderDepth * 0.15, hw * 0.98, ny + shoulderDepth * 0.6, hw, ny + shoulderDepth);
+    s.lineTo(hw, hh - cornerR);
+    s.quadraticCurveTo(hw, hh, hw - cornerR, hh);
+    s.lineTo(-hw + cornerR, hh);
+    s.closePath();
+    return s;
+  }
 
-// ---------- Lighting ----------
-scene.add(new THREE.HemisphereLight(0xffffff, 0x999999, 1.05));
-const dir = new THREE.DirectionalLight(0xffffff, 1.0);
-dir.position.set(3, 4.5, 3);
-scene.add(dir);
+  const SCALE = 0.5;
+  const W = 1.56 * SCALE, H = 2.96 * SCALE, D = 0.018 * SCALE, neckW = 0.2 * SCALE, neckH = 0.44 * SCALE, cornerR = 0.455 * SCALE, shoulderDepth = 0.9 * SCALE;
 
-// ---------- Paddle Geometry ----------
-function paddleOutline(w, h, neckW, neckH, cornerR, shoulderDepth) {
-  const s = new THREE.Shape();
-  const hw = w / 2, hh = h / 2, nw = neckW / 2, ny = -hh + neckH;
-  s.moveTo(-hw + cornerR, hh);
-  s.quadraticCurveTo(-hw, hh, -hw, hh - cornerR);
-  s.lineTo(-hw, ny + shoulderDepth);
-  s.bezierCurveTo(-hw * 0.98, ny + shoulderDepth * 0.6, -hw * 0.45, ny + shoulderDepth * 0.15, -nw, ny);
-  s.lineTo(nw, ny);
-  s.bezierCurveTo(hw * 0.45, ny + shoulderDepth * 0.15, hw * 0.98, ny + shoulderDepth * 0.6, hw, ny + shoulderDepth);
-  s.lineTo(hw, hh - cornerR);
-  s.quadraticCurveTo(hw, hh, hw - cornerR, hh);
-  s.lineTo(-hw + cornerR, hh);
-  s.closePath();
-  return s;
-}
+  // face shape
+  const faceShape = paddleOutline(W - 0.08, H - 0.08, neckW - 0.08, neckH, cornerR - 0.05, shoulderDepth - 0.05);
+  const faceGeo = new THREE.ShapeGeometry(faceShape);
+  faceGeo.center();
 
-const SCALE = 0.5;
-const W = 1.56 * SCALE, H = 2.96 * SCALE, D = 0.02 * SCALE, neckW = 0.2 * SCALE, neckH = 0.44 * SCALE, cornerR = 0.455 * SCALE, shoulderDepth = 0.9 * SCALE;
+  // compute face bounding box to size logo plane to cover the face
+  faceGeo.computeBoundingBox();
+  const faceBox = faceGeo.boundingBox;
+  const faceWidth = faceBox.max.x - faceBox.min.x;
+  const faceHeight = faceBox.max.y - faceBox.min.y;
 
-const rimShape = paddleOutline(W, H, neckW, neckH, cornerR, shoulderDepth);
-const rimGeo = new THREE.ExtrudeGeometry(rimShape, { depth: D + 0.04, bevelEnabled: true, bevelThickness: 0.0015, bevelSize: 0.0015, bevelSegments: 9 });
-rimGeo.center();
-const rimMat = new THREE.MeshStandardMaterial({ color: 0x222, roughness: 0.45, metalness: 0.2 });
-const rim = new THREE.Mesh(rimGeo, rimMat);
-scene.add(rim);
+  // rim (thinner)
+  const rimShape = paddleOutline(W, H, neckW, neckH, cornerR, shoulderDepth);
+  // make rim extrusion a bit smaller (thinner border)
+  const rimGeo = new THREE.ExtrudeGeometry(rimShape, { depth: D + 0.018, bevelEnabled: true, bevelThickness: 0.0012, bevelSize: 0.0009, bevelSegments: 4 });
+  rimGeo.center();
+  const rimMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.45, metalness: 0.1 });
+  const rim = new THREE.Mesh(rimGeo, rimMat);
+  scene.add(rim);
 
-const faceShape = paddleOutline(W - 0.08, H - 0.08, neckW - 0.08, neckH, cornerR - 0.05, shoulderDepth - 0.05);
-const faceGeo = new THREE.ShapeGeometry(faceShape);
-faceGeo.center();
-const faceMat = new THREE.MeshPhysicalMaterial({ color: 0xbcbcbc, roughness: 0.3, metalness: 0.15, clearcoat: 0.9, clearcoatRoughness: 0.05, reflectivity: 0.8 });
-const frontFace = new THREE.Mesh(faceGeo, faceMat);
-frontFace.position.z = 0.045;
-const backFace = new THREE.Mesh(faceGeo, faceMat.clone());
-backFace.position.z = -0.045;
-backFace.rotation.y = Math.PI;
-scene.add(frontFace, backFace);
-const faces = [frontFace, backFace];
+  const faceMat = new THREE.MeshPhysicalMaterial({ color: 0xbcbcbc, roughness: 0.3, metalness: 0.12, clearcoat: 0.9, clearcoatRoughness: 0.06, reflectivity: 0.8 });
+  const frontFace = new THREE.Mesh(faceGeo, faceMat);
+  frontFace.position.z = 0.04; // slightly reduced offset to match thinner rim
+  const backFace = new THREE.Mesh(faceGeo, faceMat.clone());
+  backFace.position.z = -0.04;
+  backFace.rotation.y = Math.PI;
+  scene.add(frontFace, backFace);
+  const faces = [frontFace, backFace];
 
-// ---------- Handle ----------
-const neckGeo = new THREE.CylinderGeometry(0.12, 0.13, 0.1, 36);
-const neckMat = new THREE.MeshStandardMaterial({ color: 0x222 });
-const neck = new THREE.Mesh(neckGeo, neckMat);
-const neckPosY = -H / 2 + 0.16;
-neck.position.y = neckPosY;
-scene.add(neck);
+  // ---------- Handle ----------
+  const neckGeo = new THREE.CylinderGeometry(0.12, 0.13, 0.098, 36);
+  const neckMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+  const neck = new THREE.Mesh(neckGeo, neckMat);
+  const neckPosY = -H / 2 + 0.16;
+  neck.position.y = neckPosY;
+  scene.add(neck);
 
-const handleGeo = new THREE.CylinderGeometry(0.115, 0.115, 0.5, 48);
-const handleMat = new THREE.MeshStandardMaterial({ color: 0xc83b2b });
-const handle = new THREE.Mesh(handleGeo, handleMat);
-handle.position.y = neckPosY - 0.3;
-scene.add(handle);
+  const handleGeo = new THREE.CylinderGeometry(0.115, 0.115, 0.5, 48);
+  const handleMat = new THREE.MeshStandardMaterial({ color: 0xA7353C });
+  const handle = new THREE.Mesh(handleGeo, handleMat);
+  handle.position.y = neckPosY - 0.3;
+  scene.add(handle);
 
-// ---------- Logo ----------
-let logoFront = null, logoBack = null;
-const loader = new THREE.TextureLoader();
-function addLogo(tex) {
-  removeLogos();
-  const geo = new THREE.PlaneGeometry(W * 0.6, H * 0.25);
-  const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
-  logoFront = new THREE.Mesh(geo, mat);
-  logoBack = new THREE.Mesh(geo, mat.clone());
-  logoBack.rotation.y = Math.PI;
-  logoFront.position.z = 0.05;
-  logoBack.position.z = -0.05;
-  updateLogoPosition();
-  scene.add(logoFront, logoBack);
-}
-function removeLogos() {
-  if (logoFront) scene.remove(logoFront);
-  if (logoBack) scene.remove(logoBack);
-  logoFront = logoBack = null;
-}
-function updateLogoPosition() {
-  if (!logoFront) return;
-  const x = parseFloat(document.getElementById('logoX').value);
-  const y = parseFloat(document.getElementById('logoY').value);
-  const scale = parseFloat(document.getElementById('logoScale').value);
-  logoFront.position.x = x; logoFront.position.y = y; logoFront.scale.set(scale, scale, 1);
-  logoBack.position.x = x; logoBack.position.y = y; logoBack.scale.set(scale, scale, 1);
-}
-['logoX','logoY','logoScale'].forEach(id => document.getElementById(id).addEventListener('input', updateLogoPosition));
+  // ---------- Logo ----------
+  let logoFront = null, logoBack = null;
+  const loader = new THREE.TextureLoader();
 
-document.getElementById('logoUpload').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    const tex = loader.load(reader.result);
+  function addLogo(tex) {
+    removeLogos();
+
+    // ensure texture is ready with sRGB encoding
     tex.encoding = THREE.sRGBEncoding;
-    addLogo(tex);
-  };
-  reader.readAsDataURL(file);
-});
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
-// ---------- Color Pickers ----------
-function setupColorPicker(selector, callback) {
-  document.querySelectorAll(selector).forEach(s => {
-    s.addEventListener('click', () => {
-      s.parentNode.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('active'));
-      s.classList.add('active');
-      callback(s.dataset.color);
-    });
+    // Scale the plane to nearly the full face; we use faceWidth/faceHeight from the face geometry
+    // and multiply by a cover factor so the logo covers the full paddle face.
+    const coverFactor = 0.94; // slightly inset so it doesn't overshoot curved edges
+    const geo = new THREE.PlaneGeometry(faceWidth * coverFactor, faceHeight * coverFactor);
+
+    // make texture cover the plane fully (centered)
+    tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
+    tex.minFilter = THREE.LinearMipMapLinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+
+    const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true });
+    logoFront = new THREE.Mesh(geo, mat);
+    logoBack = new THREE.Mesh(geo, mat.clone());
+    logoBack.rotation.y = Math.PI;
+
+    // place logos flush to the face, small offset
+    logoFront.position.z = 0.045;
+    logoBack.position.z = -0.045;
+
+    // initial transform values come from controls
+    updateLogoPosition();
+    scene.add(logoFront, logoBack);
+  }
+
+  function removeLogos() {
+    if (logoFront) { scene.remove(logoFront); logoFront.geometry.dispose(); if (logoFront.material.map) logoFront.material.map = null; logoFront.material.dispose(); }
+    if (logoBack) { scene.remove(logoBack); logoBack.geometry.dispose(); if (logoBack.material.map) logoBack.material.map = null; logoBack.material.dispose(); }
+    logoFront = logoBack = null;
+  }
+
+  function updateLogoPosition() {
+    if (!logoFront) return;
+    const x = parseFloat(document.getElementById('logoX').value);
+    const y = parseFloat(document.getElementById('logoY').value);
+    const scale = parseFloat(document.getElementById('logoScale').value);
+    logoFront.position.x = x; logoFront.position.y = y; logoFront.scale.set(scale, scale, 1);
+    logoBack.position.x = x; logoBack.position.y = y; logoBack.scale.set(scale, scale, 1);
+  }
+
+  ['logoX','logoY','logoScale'].forEach(id => document.getElementById(id).addEventListener('input', updateLogoPosition));
+
+  document.getElementById('logoUpload').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const tex = loader.load(reader.result, () => {
+        // once loaded, ensure it covers the plane fully (no repeat)
+        tex.center = new THREE.Vector2(0.5, 0.5);
+        addLogo(tex);
+      });
+    };
+    reader.readAsDataURL(file);
   });
-}
-setupColorPicker('#paddleColors .color-swatch', c => faces.forEach(f => f.material.color.set(c)));
-setupColorPicker('#gripColors .color-swatch', c => handleMat.color.set(c));
-setupColorPicker('#rimColors .color-swatch', c => rimMat.color.set(c));
 
-// ---------- Animate ----------
-function animate() {
-  requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
-}
-animate();
-</script>
+  // ---------- Color Pickers ----------
+  function setupColorPicker(selector, callback) {
+    document.querySelectorAll(selector).forEach(s => {
+      s.addEventListener('click', () => {
+        s.parentNode.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('active'));
+        s.classList.add('active');
+        callback(s.dataset.color);
+        updateSelectedMeta();
+      });
+    });
+  }
 
+  setupColorPicker('#paddleColors .color-swatch', c => faces.forEach(f => f.material.color.set(c)));
+  setupColorPicker('#gripColors .color-swatch', c => handleMat.color.set(c));
+  setupColorPicker('#rimColors .color-swatch', c => rimMat.color.set(c));
+
+  function updateSelectedMeta() {
+    const type = document.getElementById('paddleType').selectedOptions[0].text;
+    const grip = document.querySelector('#gripColors .color-swatch.active').dataset.color;
+    const rimcol = document.querySelector('#rimColors .color-swatch.active').dataset.color;
+    document.getElementById('selectedMeta').textContent = `${type} • Grip: ${grip} • Edgeguard: ${rimcol}`;
+  }
+
+  // ---------- Paddle Type, Description & Pricing ----------
+  const priceMap = {
+    gio: 4499,
+    power: 5499,
+    std: 3399
+  };
+
+  const descMap = {
+    gio: `<strong>GIO Air</strong><br>Lightweight frame prioritizing maneuverability and soft touch. Ideal for players who like speed and quick reactions.`,
+    power: `<strong>PowerPlay</strong><br>Stiff core and powerful sweet spot for aggressive drives and strong smashes. Great for advanced players.`,
+    std: `<strong>Standard</strong><br>Balanced playability and durability — a dependable choice for casual and club players.`
+  };
+
+  document.getElementById('paddleType').addEventListener('change', e => {
+    const v = e.target.value;
+    document.getElementById('paddleDesc').innerHTML = descMap[v];
+    document.getElementById('priceBox').textContent = `₹ ${priceMap[v].toLocaleString('en-IN')}`;
+    recalcTotal();
+    updateSelectedMeta();
+  });
+
+  // ---------- Quantity / Total ----------
+  function recalcTotal() {
+    const qty = Math.max(1, parseInt(document.getElementById('qty').value) || 1);
+    const key = document.getElementById('paddleType').value;
+    const total = priceMap[key] * qty;
+    document.getElementById('totalBox').textContent = `Total: ₹ ${total.toLocaleString('en-IN')}`;
+  }
+
+  document.getElementById('qty').addEventListener('change', recalcTotal);
+  document.getElementById('qty').addEventListener('input', recalcTotal);
+
+  // init price
+  document.getElementById('priceBox').textContent = `₹ ${priceMap['gio'].toLocaleString('en-IN')}`;
+  recalcTotal();
+
+  // ---------- Add to Cart (collect preview) ----------
+  document.getElementById('addToCartBtn').addEventListener('click', () => {
+    // get canvas image
+    try {
+      const dataURL = renderer.domElement.toDataURL('image/png');
+      const payload = {
+        type: document.getElementById('paddleType').value,
+        description: document.getElementById('paddleDesc').innerText,
+        priceEach: priceMap[document.getElementById('paddleType').value],
+        qty: parseInt(document.getElementById('qty').value) || 1,
+        total: (priceMap[document.getElementById('paddleType').value] * (parseInt(document.getElementById('qty').value) || 1)),
+        grip: document.querySelector('#gripColors .color-swatch.active').dataset.color,
+        edgeguard: document.querySelector('#rimColors .color-swatch.active').dataset.color,
+        faceColor: document.querySelector('#paddleColors .color-swatch.active').dataset.color,
+        logoPos: {
+          x: parseFloat(document.getElementById('logoX').value),
+          y: parseFloat(document.getElementById('logoY').value),
+          scale: parseFloat(document.getElementById('logoScale').value)
+        },
+        previewImageDataURL: dataURL,
+        createdAt: new Date().toISOString()
+      };
+
+      // For demo we'll log it and show a tiny confirmation; in production send to your backend.
+      console.log('Cart payload:', payload);
+      alert('Added to cart — payload logged to console.\n(Preview image included as image data.)');
+    } catch (err) {
+      console.error(err);
+      alert('Could not capture preview image.');
+    }
+  });
+
+  // ---------- Testimonials (small carousel) ----------
+  const testimonials = [
+    { text: '“Love the balance — this paddle gave me better control during doubles.”', author: 'Priya K.' },
+    { text: '“Excellent feel and lightweight — improved my reaction time.”', author: 'Rahul S.' },
+    { text: '“Sturdy edgeguard and great finish. Looks pro.”', author: 'Ananya M.' },
+    { text: '“PowerPlay adds punch to my drives — highly recommended for aggressive players.”', author: 'Vikram D.' }
+  ];
+  let testIndex = 0;
+  const testTextEl = document.getElementById('testimonialText');
+  const testAuthorEl = document.getElementById('testimonialAuthor');
+
+  function showTest(idx) {
+    const t = testimonials[idx % testimonials.length];
+    testTextEl.textContent = t.text;
+    testAuthorEl.textContent = `— ${t.author}`;
+  }
+  document.getElementById('prevTest').addEventListener('click', () => { testIndex = (testIndex - 1 + testimonials.length) % testimonials.length; showTest(testIndex); });
+  document.getElementById('nextTest').addEventListener('click', () => { testIndex = (testIndex + 1) % testimonials.length; showTest(testIndex); });
+  showTest(0);
+
+  // ---------- Animate ----------
+  function onResize() {
+    const rect = canvas.getBoundingClientRect();
+    const w = Math.max(200, rect.width);
+    const h = Math.max(200, rect.height);
+    renderer.setSize(w, h, true);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', onResize);
+  onResize();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // ---------- small helpers ----------
+  // ensure initial active color classes (since some active swatches are set in markup)
+  (function initActiveSwatches(){
+    // ensure at least one active in each set
+    ['#paddleColors','#gripColors','#rimColors'].forEach(sel => {
+      const root = document.querySelector(sel);
+      if (root && !root.querySelector('.color-swatch.active')) {
+        const first = root.querySelector('.color-swatch');
+        if (first) first.classList.add('active');
+      }
+    });
+    // apply initial colors to materials
+    const initialPaddle = document.querySelector('#paddleColors .color-swatch.active').dataset.color;
+    const initialGrip = document.querySelector('#gripColors .color-swatch.active').dataset.color;
+    const initialRim = document.querySelector('#rimColors .color-swatch.active').dataset.color;
+    faces.forEach(f => f.material.color.set(initialPaddle));
+    handleMat.color.set(initialGrip);
+    rimMat.color.set(initialRim);
+    updateSelectedMeta();
+  })();
+
+  </script>
 </body>
 </html>
