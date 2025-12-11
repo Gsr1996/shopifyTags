@@ -868,7 +868,7 @@
                               ctx.clip();
 
                               const destW = Math.round(canvasSize * coverFactor);
-                              const imgRatio = img.width / img.height;
+                              const imgRatio = img.width / img.height - 2;
                               let drawW = destW;
                               let drawH = Math.round(drawW / imgRatio);
                               const destH = Math.round(canvasSize * coverFactor);
@@ -1053,4 +1053,5 @@
 </body>
 
 </html>
+
 
