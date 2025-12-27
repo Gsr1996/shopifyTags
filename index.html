@@ -60,7 +60,6 @@
                   flex: 1;
                   min-width: 60rem;
                   height: 70rem;
-                  border-radius: var(--radius);
                   overflow: hidden;
                   background: linear-gradient(180deg, #f7f7f8, #eef1f6);
                   display: flex;
@@ -75,7 +74,6 @@
 
             #paddle-customizer-demo .canvasWrap {
                   flex: 1;
-                  border-radius: var(--radius);
                   overflow: hidden;
                   display: flex;
                   align-items: center;
@@ -86,7 +84,6 @@
                   width: 100%;
                   height: 100%;
                   display: block;
-                  border-radius: var(--radius);
             }
 
             #paddle-customizer-demo h2 {
@@ -254,6 +251,14 @@
                   font-weight: 600;
             }
 
+            .material-desc {
+                  display: none;
+                  background: #fff;
+                  padding: 10px;
+                  border-radius: 8px;
+                  border: 1px solid #ddd;
+            }
+
             @media (max-width:980px) {
                   #paddle-customizer-demo .pc-body {
                         flex-direction: column;
@@ -278,6 +283,54 @@
             <div class="pc-body">
                   <div class="pc-ui">
                         <h2>Pickleball Paddle Customizer</h2>
+                        <div class="box variant-selects"
+                              id="variant-selects-template--15632634151041__custom_product_7Cy8M3"
+                              data-section="template--15632634151041__custom_product_7Cy8M3">
+                              <h3>Select Paddle Model</h3><label for="model-surface-material">Surface Material:</label>
+
+                              <select id="model-surface-material">
+
+                                    <option value="Fiberglass" role="option" aria-label="Fiberglass"
+                                          selected="selected">
+                                          Fiberglass
+                                    </option>
+
+                                    <option value="T300" role="option" aria-label="T300">
+                                          T300
+                                    </option>
+
+                                    <option value="T700" role="option" aria-label="T700">
+                                          T700
+                                    </option>
+
+                              </select>
+                              <label for="model-size">Size:</label>
+
+                              <select id="model-size">
+
+                                    <option value="1-5" role="option" aria-label="1-5" selected="selected">
+                                          1-5
+                                    </option>
+
+                                    <option value="6-10" role="option" aria-label="6-10">
+                                          6-10
+                                    </option>
+
+                                    <option value="11-20" role="option" aria-label="11-20">
+                                          11-20
+                                    </option>
+
+                                    <option value="21-50" role="option" aria-label="21-50">
+                                          21-50
+                                    </option>
+
+                                    <option value="51-100" role="option" aria-label="51-100">
+                                          51-100
+                                    </option>
+
+                              </select>
+
+                        </div>
 
                         <h3>Paddle Face Color</h3>
                         <div id="paddleColors-demo" class="swatches">
@@ -359,10 +412,10 @@
                         <h3>Logo Controls</h3>
                         <label>Left/Right Position</label>
                         <input type="range" id="logoX-demo" min="-0.6" max="0.6" step="0.01" value="0">
-                        <label> Up/Down   Position</label>
+                        <label> Up/Down Position</label>
                         <input type="range" id="logoY-demo" min="-0.6" max="0.6" step="0.01" value="0">
                         <label>Size</label>
-                        <input type="range" id="logoScale-demo" min="0.3" max="1" step="0.01" value="1.05">
+                        <input type="range" id="logoScale-demo" min="0.3" max="1" step="0.01" value="1">
 
                         <label for="paddleType-demo">Paddle Type</label>
                         <select id="paddleType-demo">
@@ -439,15 +492,26 @@
 
             <div class="product-description-box">
                   <h3>Product Description</h3>
-                  <p><strong>Fiberglass:</strong> Our fiberglass pickleball paddle gives players a lightweight,
-                        responsive feel with extra pop for easy, fun gameplay. It’s durable, comfortable, and perfect
-                        for beginners and intermediates who want power and control.</p>
-                  <p><strong>T300 Carbon Fiber:</strong> Our T300 Carbon Fiber paddle offers a stiffer, more controlled
-                        feel with a crisp response on every shot. It’s ideal for players who want better precision,
-                        added spin, and a more premium build without jumping to the highest price tier.</p>
-                  <p><strong>T700 Carbon Fiber:</strong> Our T700 Carbon Fiber paddle delivers maximum spin, control,
-                        and durability thanks to its tightly woven premium carbon fiber surface. It’s a pro-level option
-                        that gives players a super consistent feel and high performance on every shot.</p>
+
+                  <div class="descriptions">
+                        <p class="material-desc" data-material="Fiberglass" style="display: block;">
+                              <strong>Fiberglass:</strong> Lightweight, responsive feel with extra pop. Great for
+                              beginners and intermediates
+                              who want power and control.
+                        </p>
+
+                        <p class="material-desc" data-material="T300">
+                              <strong>T300 Carbon Fiber:</strong> Stiffer, more controlled feel with a crisp response.
+                              Good precision and
+                              added spin at a mid-range price.
+                        </p>
+
+                        <p class="material-desc" data-material="T700">
+                              <strong>T700 Carbon Fiber:</strong> Maximum spin, control, and durability. Pro-level
+                              performance with superior
+                              consistency.
+                        </p>
+                  </div>
             </div>
 
             <!-- Hidden variant ID (demo) -->
@@ -493,6 +557,7 @@
 
                         /* Prices from Variant JSON (demo) */
                         const variantSelectRoot = document.querySelector('.variant-selects');
+                        console.log(variantSelectRoot, 'variantSelectRoot');
                         const variantData = JSON.parse(document.querySelector('#product_custom_varint').textContent);
 
                         const variantIdInput = document.getElementById(`pc-variant-id-${sid}`);
@@ -588,14 +653,13 @@
                         }
 
                         const SCALE = 0.5;
-                        const W = 1.56 * SCALE,
-                              H = 2.96 * SCALE,
-                              D = 0.018 * SCALE;
-                        const neckW = 0.2 * SCALE,
-                              neckH = 0.44 * SCALE,
-                              cornerR = 0.455 * SCALE,
-                              shoulderDepth = 0.9 * SCALE;
-
+                        const W = 1.76 * SCALE;   // overall width
+                        const H = 2.9 * SCALE;   // overall height
+                        const D = 0.018 * SCALE;  // thickness
+                        const neckW = 0.22 * SCALE;       // handle connection width
+                        const neckH = 0.42 * SCALE;      // handle connection height
+                        const cornerR = 0.52 * SCALE;   // roundness of top corners
+                        const shoulderDepth = 0.85 * SCALE; // curve depth near the neck
                         const faceShape = paddleOutline(W - 0.08, H - 0.08, neckW - 0.08, neckH, cornerR - 0.05, shoulderDepth - 0.05);
                         const faceGeo = new THREE.ShapeGeometry(faceShape);
                         faceGeo.center();
@@ -606,6 +670,23 @@
 
                         const logoShapeGeoBase = new THREE.ShapeGeometry(faceShape);
                         ensureUVsForShapeGeometry(logoShapeGeoBase);
+                        function rebuildPaddleShape(newParams) {
+                              const newShape = paddleOutline(
+                                    newParams.W,
+                                    newParams.H,
+                                    newParams.neckW,
+                                    newParams.neckH,
+                                    newParams.cornerR,
+                                    newParams.shoulderDepth
+                              );
+
+                              // Dispose old geometries
+                              faceGeo.dispose();
+                              rimGeo.dispose();
+
+                              // Recreate face, rim, logo geometries
+                        }
+
 
                         const rimShape = paddleOutline(W, H, neckW, neckH, cornerR, shoulderDepth);
                         const rimGeo = new THREE.ExtrudeGeometry(rimShape, {
@@ -691,11 +772,11 @@
                               // Define the rim/border boundaries (adjust these to match your paddle)
                               const rimThickness = 0.08;  // How thick is your rim
                               const rimMargin = 0.02;     // Safety margin from rim edge
-                              
+
                               // Effective drawable area (inside the rim)
                               const effectiveWidth = faceWidth - (rimThickness * 2) - (rimMargin * 2);
                               const effectiveHeight = faceHeight - (rimThickness * 2) - (rimMargin * 2);
-                              
+
                               const halfW = effectiveWidth / 2;
                               const halfH = effectiveHeight / 2;
 
@@ -713,6 +794,7 @@
 
                               return Math.max(0.01, Math.min(sx, sy));
                         }
+
 
                         function updateLogoPosition() {
                               if (!logoMeshFront) return;
@@ -794,35 +876,36 @@
                         function addLogoFromImage(img) {
                               disposeLogoMeshes();
 
-                              const texture = buildClippedLogoTexture(img, 0.92, 2048);
+                              const texture = buildFlatLogoTexture(img);
 
-                              const geo = logoShapeGeoBase.clone();
-                              const scaleX = PLANE_COVER_FACTOR;
-                              const scaleY = PLANE_COVER_FACTOR;
-                              const posAttr = geo.attributes.position;
-                              for (let i = 0; i < posAttr.count; i++) {
-                                    posAttr.setX(i, posAttr.getX(i) * scaleX);
-                                    posAttr.setY(i, posAttr.getY(i) * scaleY);
-                              }
-                              posAttr.needsUpdate = true;
-                              geo.computeBoundingBox();
-                              ensureUVsForShapeGeometry(geo);
+                              // keep original aspect ratio
+                              const aspect = img.width / img.height;
+                              const baseSize = faceWidth * 0.699; // base size relative to face
 
-                              const matF = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-                              logoMeshFront = new THREE.Mesh(geo, matF);
+                              const geometry = new THREE.PlaneGeometry(
+                                    baseSize,
+                                    baseSize / aspect
+                              );
+
+                              const material = new THREE.MeshBasicMaterial({
+                                    map: texture,
+                                    transparent: true,
+                                    alphaTest: 0.01
+                              });
+
+                              logoMeshFront = new THREE.Mesh(geometry, material);
                               logoMeshFront.position.z = 0.045;
                               scene.add(logoMeshFront);
 
-                              const geoBack = geo.clone();
-                              ensureUVsForShapeGeometry(geoBack);
-                              const matB = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-                              logoMeshBack = new THREE.Mesh(geoBack, matB);
+                              logoMeshBack = new THREE.Mesh(
+                                    geometry.clone(),
+                                    material.clone()
+                              );
                               logoMeshBack.rotation.y = Math.PI;
                               logoMeshBack.position.z = -0.045;
                               scene.add(logoMeshBack);
 
                               currentLogoTexture = texture;
-
                               updateLogoPosition();
                         }
 
@@ -839,55 +922,14 @@
                               logoMeshFront = logoMeshBack = null;
                         }
 
-                        function buildClippedLogoTexture(img, coverFactor = 0.92, canvasSize = 2048) {
-                              const c = document.createElement('canvas');
-                              c.width = c.height = canvasSize;
-                              const ctx = c.getContext('2d');
-                              ctx.clearRect(0, 0, canvasSize, canvasSize);
 
-                              const pts = faceShape.getPoints(800);
-                              const minX = faceBox.min.x,
-                                    minY = faceBox.min.y;
-                              const w = faceWidth,
-                                    h = faceHeight;
-
-                              function tx(x) {
-                                    return Math.round(((x - minX) / w) * canvasSize);
-                              }
-                              function ty(y) {
-                                    return Math.round(canvasSize - ((y - minY) / h) * canvasSize);
-                              }
-
-                              ctx.beginPath();
-                              if (pts.length) {
-                                    ctx.moveTo(tx(pts[0].x), ty(pts[0].y));
-                                    for (let i = 1; i < pts.length; i++) ctx.lineTo(tx(pts[i].x), ty(pts[i].y));
-                                    ctx.closePath();
-                              }
-                              ctx.save();
-                              ctx.clip();
-
-                              const destW = Math.round(canvasSize * coverFactor);
-                              const imgRatio = img.width / img.height - 2;
-                              let drawW = destW;
-                              let drawH = Math.round(drawW / imgRatio);
-                              const destH = Math.round(canvasSize * coverFactor);
-                              if (drawH > destH) {
-                                    drawH = destH;
-                                    drawW = Math.round(drawH * imgRatio);
-                              }
-                              const dx = Math.round((canvasSize - drawW) / 2);
-                              const dy = Math.round((canvasSize - drawH) / 2);
-
-                              ctx.drawImage(img, dx, dy, drawW, drawH);
-                              ctx.restore();
-
-                              const tex = new THREE.CanvasTexture(c);
-                              tex.encoding = THREE.sRGBEncoding;
+                        function buildFlatLogoTexture(img) {
+                              const tex = new THREE.Texture(img);
                               tex.needsUpdate = true;
+                              tex.encoding = THREE.sRGBEncoding;
+                              tex.anisotropy = 8;
                               return tex;
                         }
-
                         /* -------------------------------------------------
                           TESTIMONIALS
                         ------------------------------------------------- */
@@ -907,6 +949,7 @@
                         ];
 
                         let currentIndex = 0;
+                        let testimonialInterval;
 
                         const textEl = document.getElementById("testimonialText");
                         const authorEl = document.getElementById("testimonialAuthor");
@@ -922,16 +965,31 @@
                         function showNext() {
                               currentIndex = (currentIndex + 1) % testimonials.length;
                               renderTestimonial(currentIndex);
+                              resetAutoSlide();
                         }
 
                         function showPrev() {
                               currentIndex = (currentIndex - 1 + testimonials.length) % testimonials.length;
                               renderTestimonial(currentIndex);
+                              resetAutoSlide();
+                        }
+
+                        function startAutoSlide() {
+                              testimonialInterval = setInterval(() => {
+                                    currentIndex = (currentIndex + 1) % testimonials.length;
+                                    renderTestimonial(currentIndex);
+                              }, 3000);
+                        }
+
+                        function resetAutoSlide() {
+                              clearInterval(testimonialInterval);
+                              startAutoSlide();
                         }
 
                         prevBtn.addEventListener("click", showPrev);
                         nextBtn.addEventListener("click", showNext);
                         renderTestimonial(currentIndex);
+                        startAutoSlide();
 
                         /* -------------------------------------------------
                           COLOR PICKERS
@@ -968,7 +1026,9 @@
 
                               const selectedOptions = Array.from(variantSelectRoot.querySelectorAll('select')).map((sel) => sel.value);
 
+                              console.log(selectedOptions, 'selectedOptions');
                               const currentVariant = variantData.find((v) => v.options.every((opt, i) => opt === selectedOptions[i]));
+                              console.log(currentVariant, 'selectcurrentVariantedOptions');
                               if (!currentVariant) {
                                     console.warn('No variant matched');
                                     return;
@@ -982,6 +1042,7 @@
                               const qty = Math.max(1, parseInt(qtyInput.value) || 1);
                               const total = currentVariant.price * qty;
                               totalBox.textContent = formatMoney(total);
+                              updateMaterialDescription(selectedOptions);
                         }
 
                         if (variantSelectRoot) {
@@ -991,6 +1052,23 @@
                         qtyInput.addEventListener('change', updateVariantPrice);
 
                         updateVariantPrice();
+                        function updateMaterialDescription(selectedOptions) {
+                              const selectedMaterial = selectedOptions.find((opt) =>
+                                    ["Fiberglass", "T300", "T700"].includes(opt)
+                              );
+                              console.log(selectedMaterial, 'selectedMaterial');
+                              const descEls = document.querySelectorAll(".material-desc");
+
+                              descEls.forEach((el) => {
+                                    if (el.dataset.material === selectedMaterial) {
+                                          el.style.display = "block";
+                                    } else {
+                                          el.style.display = "none";
+                                    }
+                              });
+                        }
+
+
 
                         /* -------------------------------------------------
                           ADD TO CART (DEMO)
@@ -1053,5 +1131,3 @@
 </body>
 
 </html>
-
-
