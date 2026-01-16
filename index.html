@@ -415,7 +415,7 @@
                         <label> Up/Down Position</label>
                         <input type="range" id="logoY-demo" min="-0.6" max="0.6" step="0.01" value="0">
                         <label>Size</label>
-                        <input type="range" id="logoScale-demo" min="0.3" max="1" step="0.01" value="1">
+                        <input type="range" id="logoScale-demo" min="0.3" max="2" step="0.01" value="1">
 
                         <label for="paddleType-demo">Paddle Type</label>
                         <select id="paddleType-demo">
@@ -564,7 +564,7 @@
                         const priceBox = document.getElementById(`priceBox-${sid}`);
                         const totalBox = document.getElementById(`totalBox-${sid}`);
 
-                        const PLANE_COVER_FACTOR = 0.94;
+                        const PLANE_COVER_FACTOR = 0.98; // Increased to allow logo to touch upper rim
 
                         // Global money formatter (demo-safe)
                         function formatMoney(cents) {
@@ -769,32 +769,20 @@
 
                         // max scale based on bounds (first definition) change
                         function getMaxAllowedScale(px, py) {
-                              // Define the rim/border boundaries (adjust these to match your paddle)
-                              const rimThickness = 0.08;  // How thick is your rim
-                              const rimMargin = 0.02;     // Safety margin from rim edge
-
-                              // Effective drawable area (inside the rim)
-                              const effectiveWidth = faceWidth - (rimThickness * 2) - (rimMargin * 2);
-                              const effectiveHeight = faceHeight - (rimThickness * 2) - (rimMargin * 2);
-
-                              const halfW = effectiveWidth / 2;
-                              const halfH = effectiveHeight / 2;
-
-                              // Logo coverage area
                               const pw = faceWidth * PLANE_COVER_FACTOR;
                               const ph = faceHeight * PLANE_COVER_FACTOR;
 
-                              // How much space is available at current position within the rim
+                              const halfW = faceWidth / 2;
+                              const halfH = faceHeight / 2;
+
                               const dx = Math.max(0, halfW - Math.abs(px));
                               const dy = Math.max(0, halfH - Math.abs(py));
 
-                              // Calculate max scale to fit within rim
                               const sx = pw > 0 ? (dx * 2) / pw : 0.01;
                               const sy = ph > 0 ? (dy * 2) / ph : 0.01;
 
-                              return Math.max(0.01, Math.min(sx, sy));
+                              return Math.max(0.01, Math.min(sx, sy, 3.5)); // Increased max scale
                         }
-
 
                         function updateLogoPosition() {
                               if (!logoMeshFront) return;
@@ -805,13 +793,11 @@
 
                               const { px, py } = sliderToLocalPosition(x, y);
 
-                              // Get max allowed scale and clamp it
                               const maxS = getMaxAllowedScale(px, py);
                               if (s > maxS) s = parseFloat(maxS.toFixed(3));
                               if (s < 0.001) s = 0.001;
 
-                              // Clamp position to stay within bounds
-                              const rimMargin = 0.04;
+                              const rimMargin = 0.01; // Reduced margin to allow touching rim
                               const maxPx = (faceWidth - rimMargin) / 2;
                               const maxPy = (faceHeight - rimMargin) / 2;
 
@@ -849,7 +835,7 @@
                               const sx = pw > 0 ? (dx * 2) / pw : 0.01;
                               const sy = ph > 0 ? (dy * 2) / ph : 0.01;
 
-                              return Math.max(0.01, Math.min(sx, sy));
+                              return Math.max(0.01, Math.min(sx, sy, 3.5)); // Increased max scale
                         }
 
                         logoUpload.addEventListener('change', (e) => {
